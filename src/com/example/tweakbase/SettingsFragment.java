@@ -4,10 +4,12 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -64,12 +66,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	static final String KEY_APPLICATIONS = "trackingApplications";
 	boolean trackMyApplications;
 	boolean currentlyTrackingApplications;
-	
+
 	static final String KEY_PREF_TRACK_ACCELERATION = "pref_trackAcceleration";
 	static final String KEY_ACCELERATION = "trackingAcceleration";
 	boolean trackMyAcceleration;
 	boolean currentlyTrackingAcceleration;
-	
+
 	double xcoor;
 	double ycoor;
 	double zcoor;
@@ -77,12 +79,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	private LocationManager locManager;
 	private Activity settingsActivity;
 	private PendingIntent trackLocationPendingIntent;
-	
+
 	//sensors for accelerometer
 	private SensorManager mSensorManager;
 	private Sensor mSensor;
-	
-    boolean appTrackerServiceBound = false;
+
+	boolean appTrackerServiceBound = false;
 	//	PredictVolume addPattern;
 
 	// The minimum time between updates in milliseconds
@@ -99,11 +101,18 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		settingsActivity = getActivity();
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.preferences);
+
+		// Kick off predictVolume
+		Intent intent = new Intent(settingsActivity, PredictVolumeReceiver.class);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity, 70, intent, 0);
+		AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
+		// Tell it to run once a day
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, 1000 * 60 * 60 * 24, pendingIntent);
 
 		// Load this activity's SharedPreferences and get the saved preferences
 		SharedPreferences sharedPref = getPreferenceManager().getSharedPreferences();
@@ -115,10 +124,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
 		trackMyApplications = sharedPref.getBoolean(KEY_PREF_TRACK_APPLICATIONS, true);
 		currentlyTrackingApplications = sharedPref.getBoolean(KEY_APPLICATIONS, false);
-		
+
 		trackMyAcceleration = sharedPref.getBoolean(KEY_PREF_TRACK_ACCELERATION, true);
 		currentlyTrackingAcceleration = sharedPref.getBoolean(KEY_ACCELERATION, false);
-		
+
 		mSensorManager = (SensorManager) settingsActivity.getSystemService(Context.SENSOR_SERVICE);
 		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		if (mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)){
@@ -136,12 +145,12 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		if (trackMyApplications){
 			trackApplications();
 		}
-		
+
 		if (trackMyAcceleration){
 			trackAcceleration();
 		}  
-		
-		
+
+
 	}
 
 
@@ -215,9 +224,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 			ringermodeOn.show();
 
 			PackageManager pm  = settingsActivity.getPackageManager();
-            ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
-            pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                            PackageManager.DONT_KILL_APP);
+			ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
+			pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+					PackageManager.DONT_KILL_APP);
 		}
 	}
 
@@ -226,53 +235,53 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		if(!currentlyTrackingApplications){
 			Toast applicationsOn = Toast.makeText(getActivity(), "Applications tracking started", Toast.LENGTH_LONG);
 			applicationsOn.show();
-			
+
 			Log.d(TAG, "Applicaiton tracking started");
 			Intent intent = new Intent(settingsActivity, AppTrackerReceiver.class);
-		    PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
-		    AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
-		    alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
+			AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
+			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
 		}
 	}
-	
+
 	private void trackAcceleration(){
-			
+
 		Toast accelerationOn = Toast.makeText(getActivity(), "Movement tracking started", Toast.LENGTH_LONG);
 		accelerationOn.show();
-			
+
 		Log.d(TAG, "Acceleration tracking started");
-		
-		
+
+
 		Calendar cal = Calendar.getInstance();
-		
+
 		LocationManager lm = (LocationManager)settingsActivity.getSystemService(Context.LOCATION_SERVICE); 
 		// TODO: Implement a GPS check when it is turned on
 		Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		double longitude = location.getLongitude();
 		double latitude = location.getLatitude();
-		
+
 		DatabaseHandler db = new DatabaseHandler(settingsActivity);
 		db.addACCProfile(new TBAccelerometer(latitude,longitude,cal.get(Calendar.DAY_OF_WEEK),xcoor,ycoor,zcoor));
-	
-		
+
+
 	}
-	
+
 	public void onAccuracyChanged(Sensor s, int a){
-		
+
 	}
 	@Override
 	public void onSensorChanged(SensorEvent event){
-		
+
 		xcoor = event.values[0];
 		ycoor = event.values[1];
 		zcoor = event.values[2];
 		//Log.d("Farzad", "Farzad is the best:" + xcoor);
-		
-		
+
+
 
 	}
 
-	
+
 
 
 
@@ -337,9 +346,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
 			if (!trackMyRingerMode) {
 				PackageManager pm  = settingsActivity.getPackageManager();
-	            ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
-	            pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-	                            PackageManager.DONT_KILL_APP);
+				ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
+				pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+						PackageManager.DONT_KILL_APP);
 				Log.d(TAG, "Ringer mode tracking stopped");
 				Toast ringermodeOff = Toast.makeText(getActivity(), "Ringer mode tracking stopped", Toast.LENGTH_LONG);
 				ringermodeOff.show();
@@ -363,7 +372,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				trackApplications();
 			}
 		}
-		
+
 		if (key.equals(KEY_PREF_TRACK_ACCELERATION)){
 			trackMyAcceleration = sharedPreferences.getBoolean(KEY_PREF_TRACK_ACCELERATION, true);
 			if (!trackMyAcceleration) {
@@ -374,12 +383,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
 				trackAcceleration();
 			}
-			
-	
-			
+
+
+
 		}
 	}
 
 
-	
 }

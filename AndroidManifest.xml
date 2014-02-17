@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity android:name="com.example.tweakbase.RMProfileReceiver"
+            android:theme="@android:style/Theme.Holo.Dialog"
+            android:excludeFromRecents="true"/>
 
         <receiver android:name="TBLocationChangedReceiver" >
             <intent-filter>
@@ -37,6 +41,9 @@
         </receiver>
         <receiver
             android:name="AppTrackerReceiver">
+        </receiver>
+        <receiver
+            android:name="PredictVolumeReceiver">
         </receiver>
         <receiver
             android:name="VolumeReceiver" android:enabled="false">

@@ -19,15 +19,16 @@ import android.os.PowerManager;
 import android.util.Log;
 
 public class AppTrackerReceiver extends BroadcastReceiver {
-	
+
 	private static final String TAG = "AppTrackerReceiver";
-	static boolean foundHome = false;
-	static String homeApp;
+	private static boolean foundHome = false;
+	private static String homeApp;
+	private static String lastApp = "";
 	final String blacklist = "System UI,Phone,Android System,TweakBase,Aviate,ContextProvider,Nfc Service,LogsProvider,PageBuddyNotiSvc,"
 			+ "Knox Notification Manager,Samsung Cloud Data Relay,Cover,com.sec.msc.nts.android.proxy,com.sec.knox.eventsmanager,TwDVFSApp,"
-			+ "Samsung Push Service,TouchWiz home,FilterProvider";
+			+ "Samsung Push Service,TouchWiz home,FilterProvider,Update Device";
 	List<String> BLACKLIST = Arrays.asList(blacklist.split(","));
-	
+
 	private static ActivityManager am;
 	private static PowerManager powerManager;
 
@@ -35,31 +36,31 @@ public class AppTrackerReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		if (!foundHome) {
 			Intent i = new Intent(); 
-	        i.setAction(Intent.ACTION_MAIN); 
-	        i.addCategory(Intent.CATEGORY_HOME); 
-	        PackageManager pm = context.getPackageManager(); 
-	        ResolveInfo ri = pm.resolveActivity(i, 0); 
-	        ActivityInfo ai = ri.activityInfo; 
-	        homeApp = ai.packageName;
-	        Log.d(TAG, "New homeApp decided on: " + homeApp);
-	        foundHome = true;
-	        am = (ActivityManager) context.getSystemService(Service.ACTIVITY_SERVICE);
-	        powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+			i.setAction(Intent.ACTION_MAIN); 
+			i.addCategory(Intent.CATEGORY_HOME); 
+			PackageManager pm = context.getPackageManager(); 
+			ResolveInfo ri = pm.resolveActivity(i, 0); 
+			ActivityInfo ai = ri.activityInfo; 
+			homeApp = ai.packageName;
+			Log.d(TAG, "New homeApp decided on: " + homeApp);
+			foundHome = true;
+			am = (ActivityManager) context.getSystemService(Service.ACTIVITY_SERVICE);
+			powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 		}
-		
+
 		if (!powerManager.isScreenOn()) {
 			return;	// Don't track if the screen is off
 		}
-		
+
 		List<ActivityManager.RunningAppProcessInfo> l = am.getRunningAppProcesses();
 		Iterator<ActivityManager.RunningAppProcessInfo> i = l.iterator();
 		PackageManager pm = context.getPackageManager();
-		
+
 		// set up to log to the database
 		DatabaseHandler db = new DatabaseHandler(context);
 		Calendar cal = Calendar.getInstance();
 		LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE); 
-		
+
 		while(i.hasNext()) {
 			ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo)(i.next());
 			try {
@@ -72,15 +73,17 @@ public class AppTrackerReceiver extends BroadcastReceiver {
 					break;
 				}
 				if(!BLACKLIST.contains(c.toString())){
-					 
-					// TODO: Implement a GPS check when it is turned on
-					Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-					double longitude = location.getLongitude();
-					double latitude = location.getLatitude();
-					
-					db.addAppOpened(new TBAppOpened(longitude, latitude, cal.get(Calendar.DAY_OF_WEEK), c.toString(), "place.holder.app"));
-					Log.d(TAG, c.toString());
-					break;
+					if (!lastApp.equals(c.toString())) {	// Only record if app is diff than last time
+						// TODO: Implement a GPS check when it is turned on
+						Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+						double longitude = location.getLongitude();
+						double latitude = location.getLatitude();
+
+						db.addAppOpened(new TBAppOpened(longitude, latitude, cal.get(Calendar.DAY_OF_WEEK), c.toString(), "place.holder.app"));
+						Log.d(TAG, c.toString());
+						lastApp = c.toString();
+						break;
+					}
 				}
 			} catch(Exception e) {
 

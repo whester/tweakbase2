@@ -4,16 +4,18 @@ public class TBRingermodeProfiles {
 	private double latitude;
 	private double longitude;
 	private int dayOfWeek;
-	private int intervalId;
+	private int intervalStartId;
+	private int intervalEndId;
 	private int type;
 	private boolean active; 
 	
-	public TBRingermodeProfiles (double lat, double lon, int dow, int type, int intrvlid, boolean act){
+	public TBRingermodeProfiles (double lat, double lon, int dow, int type, int intervalStartId, int intervalEndId, boolean act){
 		this.latitude = lat;
 		this.longitude = lon;
 		this.dayOfWeek = dow;
 		this.type = type; 
-		this.intervalId = intrvlid;
+		this.intervalStartId = intervalStartId;
+		this.intervalEndId = intervalEndId;
 		this.active = act;
 	}
 	
@@ -44,15 +46,23 @@ public class TBRingermodeProfiles {
 	public void setDayOfWeek(int dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;
 	}
-
-	public int getIntervalId() {
-		return intervalId;
-	}
-
-	public void setIntervalId(int intervalId) {
-		this.intervalId = intervalId;
-	}
 	
+	public int getIntervalStartId() {
+		return intervalStartId;
+	}
+
+	public int getIntervalEndId() {
+		return intervalEndId;
+	}
+
+	public void setIntervalStartId(int intervalStartId) {
+		this.intervalStartId = intervalStartId;
+	}
+
+	public void setIntervalEndId(int intervalEndId) {
+		this.intervalEndId = intervalEndId;
+	}
+
 	public int getType(){
 		return type;
 	}

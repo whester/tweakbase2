@@ -45,8 +45,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_LOC_INTERVAL_ID = "location_interval_id";
 	private static final String KEY_LOC_DAY_OF_WEEK = "location_day_of_week";
 	private static final String KEY_LOC_TIMESTAMP = "location_timestamp";
-	
-	
+
+
 	//Ringer Mode Table Columns names
 	private static final String KEY_RM_ID = "ringermode_id";
 	private static final String KEY_RM_INTERVAL_ID = "ringermode_interval_id";		
@@ -55,17 +55,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_RM_LON = "ringermode_lon";
 	private static final String KEY_RM_TYPE = "ringermode_type";
 	private static final String KEY_RM_TIMESTAMP = "ringermode_timestamp";
-	
+
 	//Table ringermode_profiles
 	private static final String KEY_RMP_ID = "ringermode_profiles_id";
-	private static final String KEY_RMP_INTERVAL_ID = "ringermode_profiles_interval_id";		
+	private static final String KEY_RMP_START_INTERVAL_ID = "ringermode_profiles_start_interval_id";	
+	private static final String KEY_RMP_END_INTERVAL_ID = "ringermode_profiles_end_interval_id";	
 	private static final String KEY_RMP_DAY_OF_WEEK = "ringermode_profiles_dayofweek";
 	private static final String KEY_RMP_LAT = "ringermode_profiles_lat";
 	private static final String KEY_RMP_LON = "ringermode_profiles_lon";
 	private static final String KEY_RMP_TYPE = "ringermode_profiles_type";
 	private static final String KEY_RMP_ACTIVE = "ringermode_profiles_active";
 	private static final String KEY_RMP_TIMESTAMP = "ringermode_profiles_timestamp";
-	
+
 
 	//Table Accelerometer
 	private static final String KEY_ACC_ID = "accelerometer_id";
@@ -76,7 +77,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_ACC_X = "accelerometer_x";
 	private static final String KEY_ACC_Y = "accelerometer_y";
 	private static final String KEY_ACC_Z = "accelerometer_z";
-	
+
 
 	//Table app_opened
 	private static final String KEY_APP_ID = "app_id";
@@ -104,7 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_LOC_DAY_OF_WEEK + " INTEGER," 
 				+ KEY_LOC_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP" +")";
 		db.execSQL(CREATE_CONTACTS_TABLE);
-		
+
 		String CREATE_RINGERMODE_TABLE = "CREATE TABLE " + TABLE_RINGERMODE + "("
 				+ KEY_RM_ID + " INTEGER PRIMARY KEY,"
 				+ KEY_RM_INTERVAL_ID + " INTEGER,"
@@ -114,10 +115,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_RM_TYPE + " INTEGER," 
 				+ KEY_RM_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP" + ")";
 		db.execSQL(CREATE_RINGERMODE_TABLE);
-		
+
 		String CREATE_RINGERMODE_PROFILES_TABLE = "CREATE TABLE " + TABLE_RM_PROFILES + "("
 				+ KEY_RMP_ID + " INTEGER PRIMARY KEY," 
-				+ KEY_RMP_INTERVAL_ID + " INTEGER,"
+				+ KEY_RMP_START_INTERVAL_ID + " INTEGER,"
+				+ KEY_RMP_END_INTERVAL_ID + " INTEGER,"
 				+ KEY_RMP_DAY_OF_WEEK + " INTEGER," 
 				+ KEY_RMP_LAT + " DOUBLE," 
 				+ KEY_RMP_LON + " DOUBLE," 
@@ -125,7 +127,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_RMP_ACTIVE + " BOOLEAN," 
 				+ KEY_RMP_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP" + ")";
 		db.execSQL(CREATE_RINGERMODE_PROFILES_TABLE);
-		
+
 
 		String CREATE_ACCELEROMETER_TABLE = "CREATE TABLE " + TABLE_ACCELEROMETER + "("
 				+ KEY_ACC_ID + "INTEGER PRIMARY KEY,"
@@ -137,7 +139,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_ACC_Y + " DOUBLE,"
 				+ KEY_ACC_Z + " DOUBLE" + ")";
 		db.execSQL(CREATE_ACCELEROMETER_TABLE);
-				
+
 
 		String CREATE_APP_OPENED_TABLE = "CREATE TABLE " + TABLE_APP_OPENED + "("
 				+ KEY_APP_ID + " INTEGER PRIMARY KEY,"
@@ -179,26 +181,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.insert(TABLE_LOCATION, null, values);
 		db.close(); // Closing database connection
 	}
-	
+
 	public void addRingermode(TBRingermode ringermode){
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		ContentValues values = new ContentValues();
 		values.put(KEY_RM_DAY_OF_WEEK, ringermode.getDayOfWeek());
 		values.put(KEY_RM_INTERVAL_ID, ringermode.getIntervalId());
 		values.put(KEY_RM_LAT, ringermode.getLatitude());
 		values.put(KEY_RM_LON, ringermode.getLongitude());
 		values.put(KEY_RM_TYPE, ringermode.getType());
-		
+
 		db.insert(TABLE_RINGERMODE, null, values);
 		db.close();
 	}
-	
+
 	public void addRMProfile(TBRingermodeProfiles rmprofile){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(KEY_RMP_DAY_OF_WEEK, rmprofile.getDayOfWeek());
-		values.put(KEY_RMP_INTERVAL_ID, rmprofile.getIntervalId());
+		values.put(KEY_RMP_START_INTERVAL_ID, rmprofile.getIntervalStartId());
+		values.put(KEY_RMP_END_INTERVAL_ID, rmprofile.getIntervalEndId());
 		values.put(KEY_RMP_LAT, rmprofile.getLatitude());
 		values.put(KEY_RMP_LON, rmprofile.getLongitude());
 		values.put(KEY_RMP_TYPE, rmprofile.getType());
@@ -207,7 +210,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.insert(TABLE_RM_PROFILES, null, values);
 		db.close();
 	}
-	
+
 
 	public void addACCProfile(TBAccelerometer accel){
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -218,11 +221,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_ACC_X, accel.getXcoordinate());
 		values.put(KEY_ACC_Y, accel.getYcoordinate());
 		values.put(KEY_ACC_Z, accel.getZcoordinate());
-		
+
 		db.insert(TABLE_ACCELEROMETER, null, values);
-		
+
 	}
-		
+
 	public void addAppOpened(TBAppOpened appopened){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -232,7 +235,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_APP_LON, appopened.getLongitude());
 		values.put(KEY_APP_NAME, appopened.getAppName());
 		values.put(KEY_APP_PACKAGE_NAME, appopened.getAppPackageName());
-		
+
 		db.insert(TABLE_APP_OPENED, null, values);
 		db.close();
 	}
@@ -261,6 +264,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return locList;
 	}
 	
+	public List<TBRingermode> getAllRingermodes() {
+		List<TBRingermode> locList = new ArrayList<TBRingermode>();
+		// Select All Query
+		String selectQuery = "SELECT  * FROM " + TABLE_RINGERMODE;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				TBRingermode ringermode = new TBRingermode();
+				ringermode.setLatitude(cursor.getDouble(3));
+				ringermode.setLongitude(cursor.getDouble(4));
+				ringermode.setIntervalId(cursor.getInt(1));
+				ringermode.setDayOfWeek(cursor.getInt(2));
+				ringermode.setType(cursor.getInt(5));
+				// Adding location to list
+				locList.add(ringermode);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return locList;
+	}
+
 	/**
 	 * Saves the passed database to the phone under the name "backup" then your unique
 	 * android device ID, then ".db"
@@ -269,28 +297,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * backupname.db. Most likely, this parameter is DatabaseHandler.DATABASE_NAME
 	 */
 	public static String exportDatabse(String databaseName, String androidId) {
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
+		try {
+			File sd = Environment.getExternalStorageDirectory();
+			File data = Environment.getDataDirectory();
 
-            if (sd.canWrite()) {
-                String currentDBPath = "//data//"+"com.example.tweakbase"+"//databases//"+databaseName+"";
-                String backupDBPath = "backup" + androidId + ".db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
+			if (sd.canWrite()) {
+				String currentDBPath = "//data//"+"com.example.tweakbase"+"//databases//"+databaseName+"";
+				String backupDBPath = "backup" + androidId + ".db";
+				File currentDB = new File(data, currentDBPath);
+				File backupDB = new File(sd, backupDBPath);
 
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-                return backupDBPath;
-            }
-        } catch (Exception e) {
-        	Log.e("DatabaseHandler", e.getMessage());
-        }
-        return "";
-    }
+				if (currentDB.exists()) {
+					FileChannel src = new FileInputStream(currentDB).getChannel();
+					FileChannel dst = new FileOutputStream(backupDB).getChannel();
+					dst.transferFrom(src, 0, src.size());
+					src.close();
+					dst.close();
+				}
+				return backupDBPath;
+			}
+		} catch (Exception e) {
+			Log.e("DatabaseHandler", e.getMessage());
+		}
+		return "";
+	}
 }

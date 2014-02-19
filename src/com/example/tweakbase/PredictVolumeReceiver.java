@@ -57,19 +57,18 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 		}
 
 		// Add these profiles to the database
-		for (int i = 0; i < pairList.size(); i++) {
-			TBRingermodePair currPair = pairList.get(i);
-			db.addRMProfile(new TBRingermodeProfiles(0, 0, currPair.getDayOfWeek(), currPair.getDayOfWeek(), 
-					currPair.getStartIntervalId(), currPair.getEndIntervalId(), false));
-		}
-
-		// Record reminders to ask user if they want us to remember this profile
 		for (TBRingermodePair pair : pairList) {
-			Intent i = new Intent(context, RMProfileReceiver.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			i.putExtra("tbRingermodePair", pair);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT);
+			TBRingermodePair currPair = pair;
+			long id = db.addRMProfile(new TBRingermodeProfiles(0, 0, currPair.getDayOfWeek(), currPair.getDayOfWeek(), 
+					currPair.getStartIntervalId(), currPair.getEndIntervalId(), false));
+
+			// Record reminders to ask user if they want us to remember this profile
+			Intent receiverIntent = new Intent(context, RMProfileReceiver.class);
+			receiverIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			receiverIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			receiverIntent.putExtra("tbRingermodePair", pair);
+			receiverIntent.putExtra("id", id);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
 			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
 			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 		}

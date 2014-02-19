@@ -28,7 +28,9 @@ public class RMProfileReceiver extends Activity {
 
 	private void askUserAboutRingermodeProfile() {
 		Log.d(TAG, "Alerting user of a new ringermode");
+		final DatabaseHandler db = new DatabaseHandler(this);
 		TBRingermodePair pair = (TBRingermodePair) getIntent().getExtras().getSerializable("tbRingermodePair");
+		final long id = getIntent().getExtras().getLong("id");	// id in table
 		if (pair == null) {
 			Log.d(TAG, "No ringermode pair found, quitting");
 			return;
@@ -42,7 +44,7 @@ public class RMProfileReceiver extends Activity {
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// Do nothing but close the dialog
+				db.setProfileAsInUse(id);
 				dialog.dismiss();
 				finish();
 			}
@@ -51,7 +53,7 @@ public class RMProfileReceiver extends Activity {
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// Do nothing
+				db.deleteProfile(id);
 				dialog.dismiss();
 				finish();
 			}

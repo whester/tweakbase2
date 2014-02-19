@@ -196,7 +196,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public void addRMProfile(TBRingermodeProfiles rmprofile){
+	public long addRMProfile(TBRingermodeProfiles rmprofile){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(KEY_RMP_DAY_OF_WEEK, rmprofile.getDayOfWeek());
@@ -207,8 +207,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_RMP_TYPE, rmprofile.getType());
 		values.put(KEY_RMP_ACTIVE, rmprofile.getActive());
 		
-		db.insert(TABLE_RM_PROFILES, null, values);
+		long ret = db.insert(TABLE_RM_PROFILES, null, values);
 		db.close();
+		return ret;
 	}
 
 
@@ -262,6 +263,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 		db.close();
 		return locList;
+	}
+	
+	public void setProfileAsInUse(long id) {
+		// TODO: Update the row
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("KEY_RMP_ACTIVE", "true");
+		if (db.update(TABLE_RM_PROFILES, cv, "_id "+"="+id, null) == 0) {
+			Log.d(TAG, "Error setting profile " + id + " as in use");
+		} else {
+			Log.d(TAG, "Successfully set profile " + id + " as in use");
+		}
+	}
+	
+	public void deleteProfile(long id) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		if (db.delete(TABLE_RM_PROFILES, KEY_RMP_ID + "=" + id, null) == 0) {
+			Log.d(TAG, "Error deleting profile " + id);
+		} else {
+			Log.d(TAG, "Successfully removed profile " + id);
+		}
 	}
 	
 	public List<TBRingermode> getAllRingermodes() {

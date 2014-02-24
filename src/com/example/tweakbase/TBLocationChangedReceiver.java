@@ -30,8 +30,6 @@ public class TBLocationChangedReceiver extends BroadcastReceiver {
 			DatabaseHandler db = new DatabaseHandler(context);
 			Calendar c = Calendar.getInstance();
 			db.addLocation(new TBLocation(location.getLatitude(), location.getLongitude(), c.get(Calendar.DAY_OF_WEEK)));
-			Log.d(TAG, "SQLite num. entries: " + db.getAllLocations().size());
-			Log.d(TAG, "DOW: " + db.getAllLocations().get(0).getDayOfWeek());
 			Log.d(TAG, "Latitude: "+ location.getLatitude()+" Longitude: "+ location.getLongitude());
 		}
 	}

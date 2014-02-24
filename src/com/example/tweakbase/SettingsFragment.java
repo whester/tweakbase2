@@ -217,31 +217,26 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	}
 
 	private void trackRingerMode() {
-		if (!currentlyTrackingRingerMode) {
+		Log.d(TAG, "Ringer mode tracking started");
+		Toast ringermodeOn = Toast.makeText(getActivity(), "Ringer mode tracking started", Toast.LENGTH_LONG);
+		ringermodeOn.show();
 
-			Log.d(TAG, "Ringer mode tracking started");
-			Toast ringermodeOn = Toast.makeText(getActivity(), "Ringer mode tracking started", Toast.LENGTH_LONG);
-			ringermodeOn.show();
-
-			PackageManager pm  = settingsActivity.getPackageManager();
-			ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
-			pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-					PackageManager.DONT_KILL_APP);
-		}
+		PackageManager pm  = settingsActivity.getPackageManager();
+		ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
+		pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+				PackageManager.DONT_KILL_APP);
 	}
 
 
 	private void trackApplications() {
-		if(!currentlyTrackingApplications){
-			Toast applicationsOn = Toast.makeText(getActivity(), "Applications tracking started", Toast.LENGTH_LONG);
-			applicationsOn.show();
+		Toast applicationsOn = Toast.makeText(getActivity(), "Applications tracking started", Toast.LENGTH_LONG);
+		applicationsOn.show();
 
-			Log.d(TAG, "Applicaiton tracking started");
-			Intent intent = new Intent(settingsActivity, AppTrackerReceiver.class);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
-			AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
-			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
-		}
+		Log.d(TAG, "Applicaiton tracking started");
+		Intent intent = new Intent(settingsActivity, AppTrackerReceiver.class);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
+		AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
+		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
 	}
 
 	private void trackAcceleration(){
@@ -368,6 +363,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				PendingIntent senderstop = PendingIntent.getBroadcast(settingsActivity, 69, intentstop, 0);
 				AlarmManager alarmManagerstop = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
 				alarmManagerstop.cancel(senderstop);
+				currentlyTrackingApplications = false;
 			} else {
 				trackApplications();
 			}

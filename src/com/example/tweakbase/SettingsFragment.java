@@ -4,25 +4,19 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.provider.Settings.Secure;
@@ -72,9 +66,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	boolean trackMyAcceleration;
 	boolean currentlyTrackingAcceleration;
 
-	double xcoor;
-	double ycoor;
-	double zcoor;
+	private float xcoor, ycoor, zcoor;
 
 	private LocationManager locManager;
 	private Activity settingsActivity;
@@ -113,6 +105,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
 		// Tell it to run once a day
 		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, 1000 * 60 * 60 * 24, pendingIntent);
+		
+		// Set up the accelerometer
+		mSensorManager = (SensorManager) settingsActivity.getSystemService(Context.SENSOR_SERVICE);
 
 		// Load this activity's SharedPreferences and get the saved preferences
 		SharedPreferences sharedPref = getPreferenceManager().getSharedPreferences();
@@ -128,12 +123,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		trackMyAcceleration = sharedPref.getBoolean(KEY_PREF_TRACK_ACCELERATION, true);
 		currentlyTrackingAcceleration = sharedPref.getBoolean(KEY_ACCELERATION, false);
 
-		mSensorManager = (SensorManager) settingsActivity.getSystemService(Context.SENSOR_SERVICE);
-		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		if (mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL)){
-			Log.d("Success", "THIS WORKS");
-		}
-
+		
 		if (trackMyLocation) {
 			trackLocation();
 		}
@@ -216,64 +206,65 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		locationmodeOn.show();
 	}
 
+	
 	private void trackRingerMode() {
-		Log.d(TAG, "Ringer mode tracking started");
-		Toast ringermodeOn = Toast.makeText(getActivity(), "Ringer mode tracking started", Toast.LENGTH_LONG);
-		ringermodeOn.show();
+		if (!currentlyTrackingRingerMode) {
 
-		PackageManager pm  = settingsActivity.getPackageManager();
-		ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
-		pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-				PackageManager.DONT_KILL_APP);
+			Log.d(TAG, "Ringer mode tracking started");
+			Toast ringermodeOn = Toast.makeText(getActivity(), "Ringer mode tracking started", Toast.LENGTH_LONG);
+			ringermodeOn.show();
+
+			PackageManager pm  = settingsActivity.getPackageManager();
+			ComponentName componentName = new ComponentName(settingsActivity, VolumeReceiver.class);
+			pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+					PackageManager.DONT_KILL_APP);
+		}
 	}
 
 
 	private void trackApplications() {
-		Toast applicationsOn = Toast.makeText(getActivity(), "Applications tracking started", Toast.LENGTH_LONG);
-		applicationsOn.show();
+		if(!currentlyTrackingApplications){
+			Toast applicationsOn = Toast.makeText(getActivity(), "Applications tracking started", Toast.LENGTH_LONG);
+			applicationsOn.show();
 
-		Log.d(TAG, "Applicaiton tracking started");
-		Intent intent = new Intent(settingsActivity, AppTrackerReceiver.class);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
-		AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
-		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
+			Log.d(TAG, "Applicaiton tracking started");
+			Intent intent = new Intent(settingsActivity, AppTrackerReceiver.class);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity.getApplicationContext(), 69, intent, 0);
+			AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
+			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 100, 2000, pendingIntent);
+		}
 	}
 
+	
 	private void trackAcceleration(){
-
+		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+			
 		Toast accelerationOn = Toast.makeText(getActivity(), "Movement tracking started", Toast.LENGTH_LONG);
 		accelerationOn.show();
 
 		Log.d(TAG, "Acceleration tracking started");
-
-
-		Calendar cal = Calendar.getInstance();
-
-		LocationManager lm = (LocationManager)settingsActivity.getSystemService(Context.LOCATION_SERVICE); 
-		// TODO: Implement a GPS check when it is turned on
-		Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		double longitude = location.getLongitude();
-		double latitude = location.getLatitude();
-
-		DatabaseHandler db = new DatabaseHandler(settingsActivity);
-		db.addACCProfile(new TBAccelerometer(latitude,longitude,cal.get(Calendar.DAY_OF_WEEK),xcoor,ycoor,zcoor));
-
-
 	}
-
+	
+	// Accelerometer override functions
+	@Override
 	public void onAccuracyChanged(Sensor s, int a){
-
+		// do nothing here
 	}
 	@Override
 	public void onSensorChanged(SensorEvent event){
-
+		LocationManager lm = (LocationManager)settingsActivity.getSystemService(Context.LOCATION_SERVICE);
+		DatabaseHandler db = new DatabaseHandler(settingsActivity);
+		Calendar cal = Calendar.getInstance();
+		
 		xcoor = event.values[0];
 		ycoor = event.values[1];
 		zcoor = event.values[2];
-		//Log.d("Farzad", "Farzad is the best:" + xcoor);
-
-
-
+		Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		
+//		Log.d("AccelerometerData", "x: " + xcoor + ", y: " + ycoor + ", z: " + zcoor);
+		db.addACCProfile(new TBAccelerometer(location.getLatitude(), location.getLongitude(), cal.get(Calendar.DAY_OF_WEEK), xcoor, ycoor, zcoor));
+		db.close();
 	}
 
 
@@ -288,7 +279,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	public void onResume() {
 		super.onResume();
 		getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	/** 
@@ -299,7 +289,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	public void onPause() {
 		getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 		super.onPause();
-		mSensorManager.unregisterListener(this, mSensor);
 	}
 
 	/**
@@ -363,7 +352,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				PendingIntent senderstop = PendingIntent.getBroadcast(settingsActivity, 69, intentstop, 0);
 				AlarmManager alarmManagerstop = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
 				alarmManagerstop.cancel(senderstop);
-				currentlyTrackingApplications = false;
 			} else {
 				trackApplications();
 			}

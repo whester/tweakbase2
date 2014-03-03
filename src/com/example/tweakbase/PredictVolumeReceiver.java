@@ -35,12 +35,12 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 		for (int i = 0; i < pairList.size() - 1; i++) {
 			int numMatches = 0;
 			TBRingermodePair currPair = pairList.get(i);
-			for (int j = i+1; j < pairList.size() && numMatches < 3; j++) {
+			for (int j = i+1; j < pairList.size() && numMatches < 1; j++) {	// TODO: Change to numMatches < 3
 				if (currPair.equals(pairList.get(j))) {
 					numMatches++;
 				}
 			}
-			if (numMatches >= 3) {
+			if (numMatches >= 1) {	// TODO: Change numMatches >= 3
 				Log.d(TAG, "We found a match from ID " + currPair.getStartIntervalId() + " to " + 
 						currPair.getEndIntervalId() + " on " + currPair.getDayOfWeek() + " with profile " + currPair.getType());
 			}
@@ -69,8 +69,8 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 			receiverIntent.putExtra("tbRingermodePair", pair);
 			receiverIntent.putExtra("id", id);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
-			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
-			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
+			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance() - 1000 * 60 * 15, pendingIntent);
+			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() - 1000 * 60 * 15 -  System.currentTimeMillis()));
 		}
 	}
 

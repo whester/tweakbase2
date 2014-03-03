@@ -56,7 +56,7 @@ public class TBRingermodePair implements Serializable {
 		if (nextOccurance <= 0) {
 			nextOccurance += 1000 * 60 * 60 * 24 * 7;	// A week from now
 		}
-		return System.currentTimeMillis() + nextOccurance - 1000 * 60 * 15 + 1000 * 60 * 60 * 6;	// 15 minutes before, 6 hour offset (idk why)
+		return System.currentTimeMillis() + nextOccurance + 1000 * 60 * 60 * 6;	// 6 hour offset FOR central time
 	}
 	
 	public String getSartTimeString() {

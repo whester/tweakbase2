@@ -266,7 +266,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 	
 	public void setProfileAsInUse(long id) {
-		// TODO: Update the row
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("KEY_RMP_ACTIVE", "true");
@@ -284,6 +283,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		} else {
 			Log.d(TAG, "Successfully removed profile " + id);
 		}
+	}
+	
+	public boolean profileInUse(long id) {
+		String selectQuery = "SELECT " + KEY_RMP_ACTIVE + " FROM " + TABLE_RINGERMODE + " WHERE " + KEY_RMP_ID + "=" + id;
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			if (cursor.getInt(0) == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		db.close();
+		return false;	// Profile probably deleted
 	}
 	
 	public List<TBRingermode> getAllRingermodes() {

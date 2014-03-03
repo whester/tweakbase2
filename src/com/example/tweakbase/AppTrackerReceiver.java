@@ -26,7 +26,7 @@ public class AppTrackerReceiver extends BroadcastReceiver {
 	private static String lastApp = "";
 	final String blacklist = "System UI,Phone,Android System,TweakBase,Aviate,ContextProvider,Nfc Service,LogsProvider,PageBuddyNotiSvc,"
 			+ "Knox Notification Manager,Samsung Cloud Data Relay,Cover,com.sec.msc.nts.android.proxy,com.sec.knox.eventsmanager,TwDVFSApp,"
-			+ "Samsung Push Service,TouchWiz home,FilterProvider,Update Device";
+			+ "Samsung Push Service,TouchWiz home,FilterProvider,Update Device,BeautifulWidgets,Calendar Storage";
 	List<String> BLACKLIST = Arrays.asList(blacklist.split(","));
 
 	private static ActivityManager am;

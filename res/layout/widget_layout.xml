@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dip"
+    android:background="@drawable/myshape" >
+
+    <ImageButton
+    android:id="@+id/App1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="5dp"
+    android:src="@drawable/doge" />
+    
+    <ImageButton
+    android:id="@+id/App2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="5dp"
+    android:src="@drawable/doge" />
+    
+    <ImageButton
+    android:id="@+id/App3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="5dp"
+    android:src="@drawable/doge" />
+    
+    <ImageButton
+    android:id="@+id/App4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="5dp"
+    android:src="@drawable/doge" />
+
+</LinearLayout> 

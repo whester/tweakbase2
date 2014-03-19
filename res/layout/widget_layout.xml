@@ -11,28 +11,24 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="7dp"
-    android:layout_marginRight="5dp"
-    android:src="@drawable/doge" />
+    android:layout_marginRight="5dp" />
     
     <ImageButton
     android:id="@+id/App2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="5dp"
-    android:src="@drawable/doge" />
+    android:layout_marginRight="5dp"/>
     
     <ImageButton
     android:id="@+id/App3"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="5dp"
-    android:src="@drawable/doge" />
+    android:layout_marginRight="5dp" />
     
     <ImageButton
     android:id="@+id/App4"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="5dp"
-    android:src="@drawable/doge" />
+    android:layout_marginRight="5dp" />
 
 </LinearLayout> 

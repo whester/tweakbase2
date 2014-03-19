@@ -79,7 +79,8 @@ public class AppTrackerReceiver extends BroadcastReceiver {
 						double longitude = location.getLongitude();
 						double latitude = location.getLatitude();
 
-						db.addAppOpened(new TBAppOpened(longitude, latitude, cal.get(Calendar.DAY_OF_WEEK), c.toString(), "place.holder.app"));
+						String packageName = pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA).packageName;
+						db.addAppOpened(new TBAppOpened(longitude, latitude, cal.get(Calendar.DAY_OF_WEEK), c.toString(), packageName));
 						Log.d(TAG, c.toString());
 						lastApp = c.toString();
 						break;

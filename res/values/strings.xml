@@ -8,5 +8,9 @@
     <string name="pref_trackRingerMode">Track my ringer mode</string>
     <string name="pref_trackApplications">Track my applications</string>
     <string name="pref_trackAcceleration">Track my movement</string>
+    <string name="widget_app1">Application number one</string>
+    <string name="widget_app2">Application number two</string>
+    <string name="widget_app3">Application number three</string>
+    <string name="widget_app4">Application number four</string>
 
 </resources>

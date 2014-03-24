@@ -5,30 +5,49 @@
     android:layout_height="match_parent"
     android:layout_margin="8dip"
     android:background="@drawable/myshape" >
-
-    <ImageButton
-    android:id="@+id/App1"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="7dp"
-    android:layout_marginRight="5dp" />
     
     <ImageButton
-    android:id="@+id/App2"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="5dp"/>
+	    android:id="@+id/App1"
+	    android:contentDescription="@string/widget_app1"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:background="@null"
+	    android:adjustViewBounds="true"
+	    android:gravity="center_horizontal|center_vertical"
+	/>
     
     <ImageButton
-    android:id="@+id/App3"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="5dp" />
+	    android:id="@+id/App2"
+	    android:contentDescription="@string/widget_app2"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:background="@null"
+	    android:adjustViewBounds="true"
+	    android:gravity="center_horizontal|center_vertical"
+    />
     
     <ImageButton
-    android:id="@+id/App4"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="5dp" />
+	    android:id="@+id/App3"
+	    android:contentDescription="@string/widget_app3"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:background="@null"
+	    android:adjustViewBounds="true"
+	    android:gravity="center_horizontal|center_vertical"
+    />
+    
+    <ImageButton
+	    android:id="@+id/App4"
+	    android:contentDescription="@string/widget_app4"
+	    android:layout_width="0dp"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:background="@null"
+	    android:adjustViewBounds="true"
+	    android:gravity="center_horizontal|center_vertical"
+    />
 
 </LinearLayout> 

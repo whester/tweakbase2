@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class MyWidgetProvider extends AppWidgetProvider {
 
@@ -126,7 +127,12 @@ public class MyWidgetProvider extends AppWidgetProvider {
 		super.onReceive(context, intent);
 		if (intent.getAction().contains("com")){
 			Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage(intent.getAction());
-			context.startActivity(LaunchIntent);
+			try {
+				context.startActivity(LaunchIntent);
+			} catch (Exception e) {
+				Toast.makeText(context.getApplicationContext(), "TweakBase could not open this app", Toast.LENGTH_SHORT).show();
+				Log.d(TAG, "App does not exist");
+			}
 		}
 	}
 	

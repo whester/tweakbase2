@@ -18,8 +18,8 @@ import android.widget.RemoteViews;
 public class MyWidgetProvider extends AppWidgetProvider {
 
 	private static final String TAG = "MyWidgetProvider";
-	// TODO: initialize this with all "com.example.tweakbase"
-	private String[] topFourApps = {"com.twitter.android", "com.snapchat.android", "com.facebook.katana", "com.example.tweakbase"};
+	// all initialized to tweakbase because we can guarantee that the user has that app
+	private String[] topFourApps = {"com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase"};
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,

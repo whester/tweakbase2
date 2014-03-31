@@ -40,9 +40,14 @@ public class TBRingermodePair implements Serializable {
 		return isOvernight;
 	}
 
-	public boolean equals(TBRingermodePair t) {
-		return this.startIntervalId == t.getStartIntervalId() && this.endIntervalId == t.getEndIntervalId() && 
-				this.type == t.getType() && this.dayOfWeek == t.getDayOfWeek();
+	public boolean equals(Object tbr) {
+		if (tbr instanceof TBRingermodePair) {
+			TBRingermodePair t = (TBRingermodePair) tbr;
+			return this.startIntervalId == t.getStartIntervalId() && this.endIntervalId == t.getEndIntervalId() && 
+					this.type == t.getType() && this.dayOfWeek == t.getDayOfWeek();
+		} else {
+			return false;
+		}
 	}
 	
 	public long getMillisOfNextOccurance() {

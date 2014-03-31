@@ -324,6 +324,32 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 		return locList;
 	}
+	
+	public List<TBRingermodeProfiles> getAllRMP() {
+		List<TBRingermodeProfiles> locList = new ArrayList<TBRingermodeProfiles>();
+		// Select All Query
+		String selectQuery = "SELECT  * FROM " + TABLE_RM_PROFILES;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				TBRingermodeProfiles prof = new TBRingermodeProfiles();
+				prof.setLatitude(cursor.getDouble(4));
+				prof.setLongitude(cursor.getDouble(5));
+				prof.setIntervalStartId(cursor.getInt(1));
+				prof.setIntervalEndId(cursor.getInt(2));
+				prof.setDayOfWeek(cursor.getInt(3));
+				prof.setType(cursor.getInt(6));
+				// Adding location to list
+				locList.add(prof);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return locList;
+	}
 
 	/**
 	 * Saves the passed database to the phone under the name "backup" then your unique

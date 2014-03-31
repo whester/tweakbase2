@@ -78,4 +78,13 @@ public class TBRingermodeProfiles {
 	public void setActive(boolean active){
 		this.active = active;
 	}
+	
+	public boolean equals(Object other) {
+		TBRingermodeProfiles o = (TBRingermodeProfiles) other;
+		if (o.getDayOfWeek() == this.dayOfWeek && o.getIntervalEndId() == this.intervalEndId && o.getIntervalStartId() == this.intervalStartId && o.getType() == this.type) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

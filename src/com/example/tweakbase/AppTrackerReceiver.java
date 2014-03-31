@@ -69,6 +69,7 @@ public class AppTrackerReceiver extends BroadcastReceiver {
 				}
 				CharSequence c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
 				if (pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA).packageName.equals(homeApp)) {
+					lastApp = homeApp;	// ensures same app open after going to home screen is recorded
 					Log.d(TAG, "At home screen, quitting.");
 					break;
 				}

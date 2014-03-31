@@ -1,5 +1,8 @@
 package com.example.tweakbase;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +22,22 @@ public class AdjustRingermodeReceiver extends BroadcastReceiver {
 		final int ringermodeType;
 		if (start) {
 			ringermodeType = pair.getType();
-			// TODO: Make new intent for this to be called with start = false, make time for the end time
+			Intent receiverIntent = new Intent(context, AdjustRingermodeReceiver.class);
+			receiverIntent.putExtra("tbRingermodePair", pair);
+			receiverIntent.putExtra("start", false);
+			receiverIntent.putExtra("id", id);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
+			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
+			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 		} else {
 			ringermodeType = AudioManager.RINGER_MODE_NORMAL;
-			// TODO: Make new intent for this to be called with start = true, make time for next occurrence
+			Intent receiverIntent = new Intent(context, AdjustRingermodeReceiver.class);
+			receiverIntent.putExtra("tbRingermodePair", pair);
+			receiverIntent.putExtra("start", true);
+			receiverIntent.putExtra("id", id);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
+			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
+			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 		}
 		DatabaseHandler db = new DatabaseHandler(context);
 		if (db.profileInUse(id)) {

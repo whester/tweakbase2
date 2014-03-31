@@ -104,7 +104,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(settingsActivity, 70, intent, 0);
 		AlarmManager alarmManager = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
 		// Tell it to run once a day
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, 1000 * 30, pendingIntent);
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, 1000 * 60 * 60 * 24, pendingIntent);
 		
 		// Set up the accelerometer
 		mSensorManager = (SensorManager) settingsActivity.getSystemService(Context.SENSOR_SERVICE);

@@ -140,7 +140,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 			trackAcceleration();
 		}  
 
-
+		// this is how we'll know that this is Clarke's magical branch
 	}
 
 

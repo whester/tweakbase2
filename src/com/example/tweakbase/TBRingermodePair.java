@@ -51,18 +51,39 @@ public class TBRingermodePair implements Serializable {
 	}
 	
 	public long getMillisOfNextOccurance() {
-		long nextOccurance = 0;
-		if (dayOfWeek - Calendar.getInstance().get(Calendar.DAY_OF_WEEK) > 0) {
-			nextOccurance += (dayOfWeek - Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) * 1000 * 60 * 60 * 24;
+		Calendar cNow = Calendar.getInstance();
+		long now = cNow.getTimeInMillis();
+		cNow.set(Calendar.HOUR_OF_DAY, 0);
+		cNow.set(Calendar.MINUTE, 0);
+		cNow.set(Calendar.SECOND, 0);
+		cNow.set(Calendar.MILLISECOND, 0);
+//		if (dayOfWeek - Calendar.getInstance().get(Calendar.DAY_OF_WEEK) > 0) {
+//			nextOccurance += (dayOfWeek - Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) * 1000 * 60 * 60 * 24;
+//		} else if (dayOfWeek - Calendar.getInstance().get(Calendar.DAY_OF_WEEK) == 0) {
+//			// do nothing
+//		} else {
+//			nextOccurance += (7 - ( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - dayOfWeek)) * 1000 * 60 * 60 * 24;
+//		}
+//		nextOccurance += (startIntervalId * 1000 * 60 * 5) - millisSinceMidnight;
+//		if (nextOccurance <= 0) {
+//			nextOccurance += 1000 * 60 * 60 * 24 * 7;	// A week from now
+//		}
+//		return System.currentTimeMillis() + nextOccurance + 1000 * 60 * 60 * 6;	// 6 hour offset FOR central time
+		
+		Calendar cNext = Calendar.getInstance();
+		cNext.set(Calendar.HOUR_OF_DAY, startIntervalId/12);
+		cNext.set(Calendar.MINUTE, (startIntervalId%12) * 5);
+		cNext.set(Calendar.SECOND, 0);
+		cNext.set(Calendar.MILLISECOND, 0);
+		cNext.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+		
+		if (cNext.getTimeInMillis() - now < 0) {
+			return cNext.getTimeInMillis() + 1000 * 60 * 60 * 24 * 7;
 		} else {
-			nextOccurance += (7 - ( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - dayOfWeek)) * 1000 * 60 * 60 * 24;
+			return cNext.getTimeInMillis();
 		}
-		nextOccurance += (startIntervalId * 1000 * 60 * 5) - (System.currentTimeMillis()%(1000*60*60*24));
-		if (nextOccurance <= 0) {
-			nextOccurance += 1000 * 60 * 60 * 24 * 7;	// A week from now
-		}
-		return System.currentTimeMillis() + nextOccurance + 1000 * 60 * 60 * 6;	// 6 hour offset FOR central time
 	}
+
 	
 	public String getSartTimeString() {
 		int startHour = (startIntervalId/12)%12;
@@ -84,14 +105,31 @@ public class TBRingermodePair implements Serializable {
 	}
 	
 	public String getEndTimeString() {
+//		int endHour = (endIntervalId/12)%12;
+//		int endMinute = (endIntervalId * 5) % 60;
+//		String m = endIntervalId >= 144 ? "pm" : "am";
+//		if (endMinute >= 10) {
+//			return endHour + ":" + endMinute + m;
+//		} else {
+//			return endHour + ":0" + endMinute + m;
+//		}
+		
 		int endHour = (endIntervalId/12)%12;
 		int endMinute = (endIntervalId * 5) % 60;
+		String endHourString;
+		String endMinuteString;
 		String m = endIntervalId >= 144 ? "pm" : "am";
-		if (endMinute >= 10) {
-			return endHour + ":" + endMinute + m;
+		if (endMinute < 10) {
+			endMinuteString = "0" + endMinute;
 		} else {
-			return endHour + ":0" + endMinute + m;
+			endMinuteString = Integer.toString(endMinute);
 		}
+		if (endHour == 0) {
+			endHourString = "12";
+		} else {
+			endHourString = Integer.toString(endHour);
+		}
+		return endHourString + ":" + endMinuteString + m;
 	}
 	
 	public String getDayOfWeekString() {

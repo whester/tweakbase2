@@ -20,7 +20,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
 
 	private static final String TAG = "MyWidgetProvider";
 	// all initialized to tweakbase because we can guarantee that the user has that app
-	private String[] topFourApps = {"com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase"};
+	private static String[] topFourApps = {"com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase", "com.example.tweakbase"};
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -136,7 +136,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
 		}
 	}
 	
-	public void setTopFourApps(String[] arr) {
+	static public void setTopFourApps(String[] arr) {
 		topFourApps = arr;
 	}
 

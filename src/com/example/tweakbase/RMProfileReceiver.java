@@ -53,9 +53,9 @@ public class RMProfileReceiver extends Activity {
 				receiverIntent.putExtra("tbRingermodePair", pair);
 				receiverIntent.putExtra("start", true);
 				receiverIntent.putExtra("id", id);
-				PendingIntent pendingIntent = PendingIntent.getActivity(thisActivity, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
+				PendingIntent pendingIntent = PendingIntent.getBroadcast(thisActivity, 70, receiverIntent, 0);
 				((AlarmManager) thisActivity.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
-				Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
+				Log.d(TAG, "Set an alert for AdjustRingermodeReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 				
 				dialog.dismiss();
 				finish();

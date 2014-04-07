@@ -26,18 +26,18 @@ public class AdjustRingermodeReceiver extends BroadcastReceiver {
 			receiverIntent.putExtra("tbRingermodePair", pair);
 			receiverIntent.putExtra("start", false);
 			receiverIntent.putExtra("id", id);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, 0);
 			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
-			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
+			Log.d(TAG, "Set an alert for AdjustRingermodeReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 		} else {
 			ringermodeType = AudioManager.RINGER_MODE_NORMAL;
 			Intent receiverIntent = new Intent(context, AdjustRingermodeReceiver.class);
 			receiverIntent.putExtra("tbRingermodePair", pair);
 			receiverIntent.putExtra("start", true);
 			receiverIntent.putExtra("id", id);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, receiverIntent, PendingIntent.FLAG_ONE_SHOT);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, 0);
 			((AlarmManager) context.getSystemService(Activity.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, pair.getMillisOfNextOccurance(), pendingIntent);
-			Log.d(TAG, "Set an alert for RMProfileReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
+			Log.d(TAG, "Set an alert for AdjustRingermodeReceiver to be in " + (pair.getMillisOfNextOccurance() -  System.currentTimeMillis()));
 		}
 		DatabaseHandler db = new DatabaseHandler(context);
 		if (db.profileInUse(id)) {
@@ -53,6 +53,7 @@ public class AdjustRingermodeReceiver extends BroadcastReceiver {
 				audiomanage.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 			}
 		}
+		db.close();
 	}
 
 }

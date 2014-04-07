@@ -124,7 +124,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				+ KEY_RMP_LAT + " DOUBLE," 
 				+ KEY_RMP_LON + " DOUBLE," 
 				+ KEY_RMP_TYPE + " INTEGER,"
-				+ KEY_RMP_ACTIVE + " BOOLEAN," 
+				+ KEY_RMP_ACTIVE + " INTEGER," 
 				+ KEY_RMP_TIMESTAMP + " DEFAULT CURRENT_TIMESTAMP" + ")";
 		db.execSQL(CREATE_RINGERMODE_PROFILES_TABLE);
 
@@ -268,8 +268,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void setProfileAsInUse(long id) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
-		cv.put("KEY_RMP_ACTIVE", "true");
-		if (db.update(TABLE_RM_PROFILES, cv, "_id "+"="+id, null) == 0) {
+		cv.put(KEY_RMP_ACTIVE, 1);
+		if (db.update(TABLE_RM_PROFILES, cv, KEY_RMP_ID +"="+id, null) == 0) {
 			Log.d(TAG, "Error setting profile " + id + " as in use");
 		} else {
 			Log.d(TAG, "Successfully set profile " + id + " as in use");
@@ -286,13 +286,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 	
 	public boolean profileInUse(long id) {
-		String selectQuery = "SELECT " + KEY_RMP_ACTIVE + " FROM " + TABLE_RINGERMODE + " WHERE " + KEY_RMP_ID + "=" + id;
+		String selectQuery = "SELECT " + KEY_RMP_ACTIVE + " FROM " + TABLE_RM_PROFILES + " WHERE " + KEY_RMP_ID + "=" + id;
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		if (cursor.moveToFirst()) {
 			if (cursor.getInt(0) == 1) {
+				db.close();
 				return true;
 			} else {
+				db.close();
 				return false;
 			}
 		}

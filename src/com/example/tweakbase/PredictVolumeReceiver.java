@@ -1,6 +1,7 @@
 package com.example.tweakbase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -17,12 +18,16 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 	private static String TAG = "PredictVolumeReceiver";
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(Context context, Intent intent) {		
 		Log.d(TAG, "Starting to detect new ringermode pairs");
 		DatabaseHandler db = new DatabaseHandler(context);
 		List<TBRingermodePair> pairList = new ArrayList<TBRingermodePair>();
 		List<TBRingermode> ringermodeList = db.getAllRingermodes();
 		for (int i = 0; i < ringermodeList.size() - 2; i++) {
+			if (ringermodeList.get(i).getIntervalId() == 160) {
+				String fish = "asfd";
+				fish.charAt(3);
+			}
 			if (normalToSilent(ringermodeList.get(i), ringermodeList.get(i+1), ringermodeList.get(i+2))) {
 				pairList.add(new TBRingermodePair(ringermodeList.get(i+1), ringermodeList.get(i+2)));		
 				i += 2;	// Need to skip
@@ -34,7 +39,7 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 
 		for (int i = 0; i < pairList.size() - 1; i++) {
 			int numMatches = 0;
-			TBRingermodePair currPair = pairList.get(i);
+			TBRingermodePair currPair = pairList.get(i);			
 			for (int j = i+1; j < pairList.size() && numMatches < 1; j++) {	// TODO: Change to numMatches < 3
 				if (currPair.equals(pairList.get(j))) {
 					numMatches++;

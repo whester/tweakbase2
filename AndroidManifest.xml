@@ -56,6 +56,9 @@
             android:name="AdjustRingermodeReceiver">
         </receiver>
         <receiver
+            android:name="TBCreateClusters">
+        </receiver>
+        <receiver
             android:name="VolumeReceiver" android:enabled="false">
             <intent-filter>
                 <action android:name="android.media.RINGER_MODE_CHANGED" />

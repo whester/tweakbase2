@@ -106,6 +106,14 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		// Tell it to run once a day
 		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, 1000 * 60 * 60 * 24 * 7, pendingIntent);
 		
+		// Kick off Cluster Creating
+		Intent intent2 = new Intent(settingsActivity, TBCreateClusters.class);
+		PendingIntent pendingIntent2 = PendingIntent.getBroadcast(settingsActivity, 7675, intent2, 0);
+		AlarmManager alarmManager2 = (AlarmManager) settingsActivity.getSystemService(Activity.ALARM_SERVICE);
+		// Tell it to run a lot for testing
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, 1000 * 60, pendingIntent2);
+		//alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 200, pendingIntent2);
+		
 		// Set up the accelerometer
 		mSensorManager = (SensorManager) settingsActivity.getSystemService(Context.SENSOR_SERVICE);
 

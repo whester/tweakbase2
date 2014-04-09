@@ -7,7 +7,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -352,6 +351,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 		return locList;
 	}
+	
+	public List<TBAppOpened> getAllApps(){
+		List<TBAppOpened> locList = new ArrayList<TBAppOpened>();
+		
+		String selectQuery = "SELECT * FROM " + TABLE_APP_OPENED;
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		
+		if(cursor.moveToFirst()){
+			do {
+				TBAppOpened appOpened = new TBAppOpened();
+				appOpened.setAppName(cursor.getString(2));
+				appOpened.setDayOfWeek(cursor.getInt(4));
+				appOpened.setIntervalId(cursor.getInt(3));
+				appOpened.setLatitude(5);
+				appOpened.setLongitude(6);
+				
+				locList.add(appOpened);
+				
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return locList;
+	}
+	
+	
 
 	/**
 	 * Saves the passed database to the phone under the name "backup" then your unique

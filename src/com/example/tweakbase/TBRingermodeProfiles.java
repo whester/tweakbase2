@@ -1,15 +1,18 @@
 package com.example.tweakbase;
 
+import android.media.AudioManager;
+
 public class TBRingermodeProfiles {
 	private double latitude;
 	private double longitude;
+	private int id;
 	private int dayOfWeek;
 	private int intervalStartId;
 	private int intervalEndId;
 	private int type;
-	private boolean active; 
+	private int active; 
 	
-	public TBRingermodeProfiles (double lat, double lon, int dow, int type, int intervalStartId, int intervalEndId, boolean act){
+	public TBRingermodeProfiles (double lat, double lon, int dow, int type, int intervalStartId, int intervalEndId, int act){
 		this.latitude = lat;
 		this.longitude = lon;
 		this.dayOfWeek = dow;
@@ -21,6 +24,14 @@ public class TBRingermodeProfiles {
 	
 	public TBRingermodeProfiles(){
 		
+	}
+	
+	public int getID(){
+		return id;
+	}
+	
+	public void setID(int id){
+		this.id = id;
 	}
 
 	public double getLatitude() {
@@ -71,11 +82,11 @@ public class TBRingermodeProfiles {
 		this.type = type;
 	}
 	
-	public boolean getActive(){
+	public int getActive(){
 		return active;
 	}
 	
-	public void setActive(boolean active){
+	public void setActive(int active){
 		this.active = active;
 	}
 	
@@ -85,6 +96,68 @@ public class TBRingermodeProfiles {
 			return true;
 		} else {
 			return false;
+		}
+	}
+	
+	@Override
+	public String toString(){
+		TBRingermodeProfiles o = (TBRingermodeProfiles) this;
+		String s = o.getDayOfWeekString() + " from " + o.getSartTimeString() + " to " + o.getEndTimeString() + " mode changes to " + o.getRingermodeTypeString() + ".";
+		return s;
+	}
+	
+	public String getSartTimeString() {
+		int startHour = (intervalStartId/12)%12;
+		int startMinute = (intervalStartId * 5) % 60;
+		String startHourString;
+		String startMinuteString;
+		String m = intervalStartId >= 144 ? "pm" : "am";
+		if (startMinute < 10) {
+			startMinuteString = "0" + startMinute;
+		} else {
+			startMinuteString = Integer.toString(startMinute);
+		}
+		if (startHour == 0) {
+			startHourString = "12";
+		} else {
+			startHourString = Integer.toString(startHour);
+		}
+		return startHourString + ":" + startMinuteString + m;
+	}
+	
+	public String getEndTimeString() {
+		int endHour = (intervalEndId/12)%12;
+		int endMinute = (intervalEndId * 5) % 60;
+		String m = intervalEndId >= 144 ? "pm" : "am";
+		if (endMinute >= 10) {
+			return endHour + ":" + endMinute + m;
+		} else {
+			return endHour + ":0" + endMinute + m;
+		}
+	}
+	
+	public String getDayOfWeekString() {
+		switch (dayOfWeek) {
+		case 1: return "Sunday";
+		case 2: return "Monday";
+		case 3: return "Tuesday";
+		case 4: return "Wednesday";
+		case 5: return "Thursday";
+		case 6: return "Friday";
+		case 7: return "Saturday";
+		default: return "Invalid date";
+		}
+	}
+	
+	public String getRingermodeTypeString() {
+		if (type == AudioManager.RINGER_MODE_SILENT) {
+			return "silence";
+		}else if(type == AudioManager.RINGER_MODE_VIBRATE){
+			return "vibrate";
+		}else if(type == AudioManager.RINGER_MODE_NORMAL){
+			return "ring";
+		}else{
+			return "well this is awkward";
 		}
 	}
 }

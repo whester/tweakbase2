@@ -275,6 +275,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 	}
 	
+	public void setProfileAsNotInUse(long id) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_RMP_ACTIVE, 0);
+		if (db.update(TABLE_RM_PROFILES, cv, KEY_RMP_ID +"="+id, null) == 0) {
+			Log.d(TAG, "Error setting profile " + id + " as in use");
+		} else {
+			Log.d(TAG, "Successfully set profile " + id + " as in use");
+		}
+	}
+	
 	public void deleteProfile(long id) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		if (db.delete(TABLE_RM_PROFILES, KEY_RMP_ID + "=" + id, null) == 0) {
@@ -344,6 +355,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				prof.setIntervalEndId(cursor.getInt(2));
 				prof.setDayOfWeek(cursor.getInt(3));
 				prof.setType(cursor.getInt(6));
+				// Adding location to list
+				locList.add(prof);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return locList;
+	}
+	
+	public List<TBRingermodeProfiles> getAllActiveRMP() {
+		List<TBRingermodeProfiles> locList = new ArrayList<TBRingermodeProfiles>();
+		// Select All Query
+		String selectQuery = "SELECT  * FROM " + TABLE_RM_PROFILES + " WHERE " + KEY_RMP_ACTIVE + "=1";
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				TBRingermodeProfiles prof = new TBRingermodeProfiles();
+				prof.setLatitude(cursor.getDouble(4));
+				prof.setLongitude(cursor.getDouble(5));
+				prof.setIntervalStartId(cursor.getInt(1));
+				prof.setIntervalEndId(cursor.getInt(2));
+				prof.setDayOfWeek(cursor.getInt(3));
+				prof.setType(cursor.getInt(6));
+				prof.setActive(cursor.getInt(7));
+				prof.setID(cursor.getInt(0));
 				// Adding location to list
 				locList.add(prof);
 			} while (cursor.moveToNext());

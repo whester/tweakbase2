@@ -1,7 +1,6 @@
 package com.example.tweakbase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -69,7 +68,7 @@ public class PredictVolumeReceiver extends BroadcastReceiver {
 		for (TBRingermodePair pair : pairList) {
 			TBRingermodePair currPair = pair;
 			TBRingermodeProfiles currProf = new TBRingermodeProfiles(0, 0, currPair.getDayOfWeek(), currPair.getType(), 
-					currPair.getStartIntervalId(), currPair.getEndIntervalId(), false);
+					currPair.getStartIntervalId(), currPair.getEndIntervalId(), 0);
 			if (!existingProfs.contains(currProf)) {
 				long id = db.addRMProfile(currProf);
 	

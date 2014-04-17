@@ -127,10 +127,6 @@ public class TBCreateClusters extends BroadcastReceiver {
 		Log.d(TAG, "We left off at line " + Index);
 		Log.d(TAG, "DONE-------------------------------------------");
 		Collections.sort(locationCount);
-		Log.d(TAG,"Size " + locationCount.size());
-		Log.d(TAG,"Highest " + locationCount.get(0).getCount());
-		Log.d(TAG,"Lowest " + locationCount.get(locationCount.size() - 1).getCount());
-	//	Log.d(TAG,"Middle " + locationCount.get(2751).getCount());
 		//The list is now ordered
 		ArrayList<LocationObject> topLocs = new ArrayList<LocationObject>();
 		

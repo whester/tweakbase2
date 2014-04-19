@@ -8,6 +8,8 @@ import com.example.tweakbase.R;
 import com.example.tweakbase.TBRingermodeProfiles;
 
 import android.support.v4.app.ListFragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class RingermodeFragment extends ListFragment {
 	
@@ -56,17 +57,49 @@ public class RingermodeFragment extends ListFragment {
 	}
 	
 	@Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+	public void onResume() {
+		super.onResume();
+		listView.invalidateViews();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		listView.invalidateViews();
+	}
+	
+	@Override
+    public void onListItemClick(ListView l, View v, final int position, long id) {
 		
-		DatabaseHandler db = new DatabaseHandler(getActivity());		
+		final DatabaseHandler db = new DatabaseHandler(getActivity());		
 
 		if(!db.getAllActiveRMP().isEmpty()){
-			Toast.makeText(getActivity(), "Deactiving profile...", Toast.LENGTH_LONG).show();
-			long dbid = db.getAllActiveRMP().get(position).getID();
-			db.setProfileAsNotInUse(dbid);
-			rmprofiles.remove(position);
-			listView.invalidateViews();
-			Toast.makeText(getActivity(), "Successfully deactived profile", Toast.LENGTH_LONG).show();
+			final long dbid = db.getAllActiveRMP().get(position).getID();
+			
+			AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+			alertDialog.setTitle("Deactivate Ringermode");
+			alertDialog.setMessage("Are you sure you want to deactivate this profile?");
+			alertDialog.setCancelable(true);
+			alertDialog.setIcon(R.drawable.ic_action_volume_on);
+
+			// OK button action
+			alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+						db.setProfileAsNotInUse(dbid);
+						rmprofiles.remove(position);
+						listView.invalidateViews();
+		           }
+		       });
+			
+			// Cancel button action
+			alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   // DO NOTHING
+		           }
+		       });
+			
+			AlertDialog confirm = alertDialog.create();
+			confirm.show();
 		}else{
 			Log.d(TAG, "No entries in the table");
 		}

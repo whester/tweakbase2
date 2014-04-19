@@ -15,8 +15,8 @@
     <string name="widget_app4">Application number four</string>
     <string name="edit_message">Doge wants you to edit</string>
     <string name="title_section1">Applications</string>
-    <string name="title_section2">Ringermode</string>
+    <string name="title_section2">Ringermodes</string>
     <string name="ringermode_instructions">Tap a ringermode to deactivate</string>
-    <string name="applications_instructions">Tap a application name to launch</string>
+    <string name="applications_instructions">Tap an application name to launch</string>
 
 </resources>

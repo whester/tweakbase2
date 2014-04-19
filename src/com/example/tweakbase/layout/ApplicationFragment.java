@@ -1,6 +1,7 @@
 package com.example.tweakbase.layout;
 
 import com.example.tweakbase.R;
+
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ApplicationFragment extends ListFragment {
 	
@@ -30,4 +32,17 @@ public class ApplicationFragment extends ListFragment {
 		
 		return rootView;
 	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		listView.invalidateViews();
+	}
+	
+	@Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+		Toast.makeText(getActivity(), "Launching application...", Toast.LENGTH_LONG).show();
+//		startActivity(getActivity().getPackageManager().getLaunchIntentForPackage("com.facebook.katana"));
+		listView.invalidateViews();
+    }
 }
